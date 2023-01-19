@@ -1,0 +1,13 @@
+version: "3"
+services:
+  lite-server:
+    build:
+      context: "."
+      dockerfile: "./Dockerfile"
+    entrypoint: ["lite-server", "-c", "bs-config.json"]
+    volumes:
+      - ./static:/home/app/static
+      - ./bs-config.json:/home/app/bs-config.json
+    ports:
+      - "1999:3000"
+      - "2000:3001"

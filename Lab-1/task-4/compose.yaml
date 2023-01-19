@@ -1,0 +1,36 @@
+version: "3"
+services:
+  lite-server:
+    build:
+      context: "../task-2"
+      dockerfile: "./Dockerfile"
+    entrypoint: ["lite-server", "-c", "bs-config.json"]
+    volumes:
+      - ./static:/home/app/static
+      - ./bs-config.json:/home/app/bs-config.json
+    deploy:
+      mode: replicated
+      replicas: 3
+    expose:
+      - "3000"
+  json-server:
+    build:
+      context: "../task-3"
+      dockerfile: "./Dockerfile"
+    entrypoint: ["json-server", "--watch", "db.json", "--host", "0.0.0.0", "--port", "3001"]
+    volumes:
+      - ./db.json:/home/app/db.json
+    deploy:
+      mode: replicated
+      replicas: 3
+    expose:
+      - "3001"
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/home/etc/nginx/nginx.conf:ro
+    depends_on:
+      - lite-server
+      - json-server
